@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}{% if item %}Edit Item{% else %}Add Item{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <nav class="flex items-center space-x-2 text-sm text-gray-500" aria-label="Breadcrumb">
+            <a href="/inventory/" class="hover:text-brand-700 transition-colors">Inventory</a>
+            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="text-gray-800 font-medium">{% if item %}Edit Item{% else %}Add Item{% endif %}</span>
+        </nav>
+    </div>
+
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <h1 class="text-xl font-semibold text-gray-900">
+                {% if item %}
+                    Edit Inventory Item
+                {% else %}
+                    Add New Inventory Item
+                {% endif %}
+            </h1>
+            <p class="mt-1 text-sm text-gray-500">
+                {% if item %}
+                    Update the details for this inventory item.
+                {% else %}
+                    Fill in the details below to add a new item to your inventory.
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="post" class="px-6 py-5 space-y-5" novalidate>
+            <!-- Name -->
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                    Name <span class="text-red-500" aria-hidden="true">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ item.name if item and item.name else '' }}"
+                    required
+                    maxlength="200"
+                    placeholder="e.g. Wireless Mouse"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.name %}form-input-error{% endif %}"
+                    aria-describedby="{% if form_errors and form_errors.name %}name-error{% endif %}"
+                >
+                {% if form_errors and form_errors.name %}
+                    <p id="name-error" class="mt-1 text-sm text-red-600">{{ form_errors.name }}</p>
+                {% endif %}
+            </div>
+
+            <!-- SKU -->
+            <div>
+                <label for="sku" class="block text-sm font-medium text-gray-700 mb-1">
+                    SKU
+                </label>
+                <input
+                    type="text"
+                    id="sku"
+                    name="sku"
+                    value="{{ item.sku if item and item.sku else '' }}"
+                    maxlength="100"
+                    placeholder="e.g. WM-001"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.sku %}form-input-error{% endif %}"
+                    aria-describedby="{% if form_errors and form_errors.sku %}sku-error{% endif %}"
+                >
+                {% if form_errors and form_errors.sku %}
+                    <p id="sku-error" class="mt-1 text-sm text-red-600">{{ form_errors.sku }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                </label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    maxlength="1000"
+                    placeholder="Optional description of the item"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.description %}form-input-error{% endif %}"
+                    aria-describedby="{% if form_errors and form_errors.description %}description-error{% endif %}"
+                >{{ item.description if item and item.description else '' }}</textarea>
+                {% if form_errors and form_errors.description %}
+                    <p id="description-error" class="mt-1 text-sm text-red-600">{{ form_errors.description }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Quantity and Unit Price (side by side) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Quantity -->
+                <div>
+                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">
+                        Quantity <span class="text-red-500" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        value="{{ item.quantity if item and item.quantity is not none else '0' }}"
+                        required
+                        min="0"
+                        step="1"
+                        placeholder="0"
+                        class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.quantity %}form-input-error{% endif %}"
+                        aria-describedby="{% if form_errors and form_errors.quantity %}quantity-error{% endif %}"
+                    >
+                    {% if form_errors and form_errors.quantity %}
+                        <p id="quantity-error" class="mt-1 text-sm text-red-600">{{ form_errors.quantity }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Unit Price -->
+                <div>
+                    <label for="unit_price" class="block text-sm font-medium text-gray-700 mb-1">
+                        Unit Price <span class="text-red-500" aria-hidden="true">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 text-sm pointer-events-none">$</span>
+                        <input
+                            type="number"
+                            id="unit_price"
+                            name="unit_price"
+                            value="{{ item.unit_price if item and item.unit_price is not none else '0.00' }}"
+                            required
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            class="block w-full rounded-md border border-gray-300 pl-7 pr-3 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.unit_price %}form-input-error{% endif %}"
+                            aria-describedby="{% if form_errors and form_errors.unit_price %}unit_price-error{% endif %}"
+                        >
+                    </div>
+                    {% if form_errors and form_errors.unit_price %}
+                        <p id="unit_price-error" class="mt-1 text-sm text-red-600">{{ form_errors.unit_price }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Reorder Level -->
+            <div>
+                <label for="reorder_level" class="block text-sm font-medium text-gray-700 mb-1">
+                    Reorder Level
+                </label>
+                <input
+                    type="number"
+                    id="reorder_level"
+                    name="reorder_level"
+                    value="{{ item.reorder_level if item and item.reorder_level is not none else '10' }}"
+                    min="0"
+                    step="1"
+                    placeholder="10"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.reorder_level %}form-input-error{% endif %}"
+                    aria-describedby="reorder-level-hint {% if form_errors and form_errors.reorder_level %}reorder_level-error{% endif %}"
+                >
+                <p id="reorder-level-hint" class="mt-1 text-sm text-gray-500">You will be alerted when stock falls below this level.</p>
+                {% if form_errors and form_errors.reorder_level %}
+                    <p id="reorder_level-error" class="mt-1 text-sm text-red-600">{{ form_errors.reorder_level }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">
+                    Category
+                </label>
+                <select
+                    id="category_id"
+                    name="category_id"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors {% if form_errors and form_errors.category_id %}form-input-error{% endif %}"
+                    aria-describedby="{% if form_errors and form_errors.category_id %}category_id-error{% endif %}"
+                >
+                    <option value="">— No Category —</option>
+                    {% if categories %}
+                        {% for category in categories %}
+                            <option
+                                value="{{ category.id }}"
+                                {% if item and item.category_id is not none and item.category_id == category.id %}selected{% endif %}
+                            >
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+                {% if form_errors and form_errors.category_id %}
+                    <p id="category_id-error" class="mt-1 text-sm text-red-600">{{ form_errors.category_id }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                <a
+                    href="/inventory/"
+                    class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 shadow-sm"
+                >
+                    Cancel
+                </a>
+                <button
+                    type="submit"
+                    class="inline-flex items-center px-5 py-2 rounded-md text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 shadow-sm"
+                >
+                    {% if item %}
+                        <svg class="w-4 h-4 mr-1.5 -ml-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        Update Item
+                    {% else %}
+                        <svg class="w-4 h-4 mr-1.5 -ml-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add Item
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

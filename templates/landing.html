@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 shadow-xl mb-12">
+    <div class="absolute inset-0 opacity-10">
+        <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="hero-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M0 20h40M20 0v40" stroke="white" stroke-width="0.5" fill="none" />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hero-pattern)" />
+        </svg>
+    </div>
+    <div class="relative px-6 py-16 sm:px-12 sm:py-24 lg:px-16 lg:py-32 text-center">
+        <div class="flex items-center justify-center mb-6">
+            <svg class="w-12 h-12 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+        </div>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
+            Inventory Management Made Simple
+        </h1>
+        <p class="max-w-2xl mx-auto text-lg sm:text-xl text-emerald-50/90 mb-10">
+            Track stock levels, manage products, and streamline your warehouse operations with StockPilot — your intelligent inventory companion.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {% if user %}
+                {% if user.role == 'admin' %}
+                    <a href="/dashboard/" class="inline-flex items-center px-8 py-3 rounded-lg text-base font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-emerald-600">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Go to Dashboard
+                    </a>
+                {% endif %}
+                <a href="/inventory/" class="inline-flex items-center px-8 py-3 rounded-lg text-base font-semibold {% if user.role == 'admin' %}text-white border-2 border-white/30 hover:bg-white/10{% else %}text-emerald-700 bg-white hover:bg-emerald-50 shadow-lg hover:shadow-xl{% endif %} transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-emerald-600">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    View Inventory
+                </a>
+            {% else %}
+                <a href="/register/" class="inline-flex items-center px-8 py-3 rounded-lg text-base font-semibold text-emerald-700 bg-white hover:bg-emerald-50 shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-emerald-600">
+                    Get Started Free
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </a>
+                <a href="/login/" class="inline-flex items-center px-8 py-3 rounded-lg text-base font-semibold text-white border-2 border-white/30 hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-emerald-600">
+                    Sign In
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="mb-16">
+    <div class="text-center mb-10">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Everything You Need to Manage Inventory</h2>
+        <p class="mt-3 max-w-2xl mx-auto text-base sm:text-lg text-gray-500">Powerful features designed to keep your stock organized and your business running smoothly.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Feature: Inventory Tracking -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 flex flex-col items-start">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Inventory Tracking</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Monitor stock levels in real time. Add, update, and manage products with detailed metadata and ownership tracking.</p>
+        </div>
+
+        <!-- Feature: Role-Based Access -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 flex flex-col items-start">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-teal-100 text-teal-600 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Role-Based Access</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Secure your data with admin and staff roles. Control who can view, edit, and manage inventory across your organization.</p>
+        </div>
+
+        <!-- Feature: Low-Stock Alerts -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 flex flex-col items-start">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-amber-100 text-amber-600 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Low-Stock Alerts</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Set custom reorder thresholds and get notified when items run low. Never miss a restock with automatic low-stock detection.</p>
+        </div>
+
+        <!-- Feature: Category Management -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-6 flex flex-col items-start">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-cyan-100 text-cyan-600 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Category Management</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Organize products into categories for easy browsing and filtering. Keep your inventory structured and searchable.</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+{% if not user %}
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-12 text-center mb-8">
+    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Ready to Take Control of Your Inventory?</h2>
+    <p class="text-gray-500 mb-6 max-w-xl mx-auto">Join StockPilot today and start managing your stock with confidence. Free to get started, no credit card required.</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="/register/" class="inline-flex items-center px-6 py-3 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+            Create Your Account
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+        </a>
+        <a href="/login/" class="inline-flex items-center px-6 py-3 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+            Already have an account? Sign in
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

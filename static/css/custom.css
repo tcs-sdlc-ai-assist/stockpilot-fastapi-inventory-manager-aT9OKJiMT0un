@@ -1,0 +1,201 @@
+/* StockPilot - Custom CSS */
+/* Minimal styles beyond Tailwind CDN capabilities */
+
+/* ============================================
+   Focus Ring Styles
+   ============================================ */
+*:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Flash Message Animations
+   ============================================ */
+@keyframes flash-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flash-fade-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+.flash-message {
+  animation: flash-slide-in 0.3s ease-out forwards;
+}
+
+.flash-message.flash-dismiss {
+  animation: flash-fade-out 0.3s ease-in forwards;
+}
+
+/* ============================================
+   Avatar Styles
+   ============================================ */
+.avatar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.avatar-badge-admin {
+  background-color: #059669;
+  color: #ffffff;
+}
+
+.avatar-badge-staff {
+  background-color: #0d9488;
+  color: #ffffff;
+}
+
+.avatar-badge-lg {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.125rem;
+}
+
+/* ============================================
+   Low Stock Indicator
+   ============================================ */
+@keyframes pulse-warning {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.low-stock-indicator {
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Table Utilities
+   ============================================ */
+.table-row-hover:hover {
+  background-color: rgba(13, 148, 136, 0.04);
+}
+
+/* ============================================
+   Form Utilities
+   ============================================ */
+.form-input-error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.form-input-error:focus-visible {
+  outline-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+}
+
+/* ============================================
+   Transition Utilities
+   ============================================ */
+.transition-height {
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+/* ============================================
+   Skip to Content (Accessibility)
+   ============================================ */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background-color: #0d9488;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: 0;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+  nav,
+  .no-print,
+  .flash-message,
+  button[type="submit"],
+  .skip-to-content {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    color: #000000;
+    background: #ffffff;
+  }
+
+  a {
+    color: #000000;
+    text-decoration: underline;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    border: 1px solid #cccccc;
+    padding: 0.5rem;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+}

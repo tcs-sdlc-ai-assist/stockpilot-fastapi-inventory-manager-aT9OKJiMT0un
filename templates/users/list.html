@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
+            <p class="mt-1 text-sm text-gray-500">Manage user accounts and roles.</p>
+        </div>
+        <div class="text-sm text-gray-500">
+            <span class="font-medium text-gray-700">{{ users | length }}</span> user{{ "s" if users | length != 1 else "" }} total
+        </div>
+    </div>
+
+    <!-- Add User Form -->
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Add New User</h2>
+            <p class="mt-1 text-sm text-gray-500">Create a new user account with a specific role.</p>
+        </div>
+        <div class="px-4 py-5 sm:px-6">
+            <form method="post" action="/users/" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Username -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username <span class="text-red-500">*</span></label>
+                        <input type="text" id="username" name="username" required minlength="3" maxlength="50" pattern="[a-zA-Z0-9_]+"
+                            class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 {% if form_errors and form_errors.username %}form-input-error{% endif %}"
+                            placeholder="e.g. jdoe"
+                            value="{{ form_data.username if form_data and form_data.username else '' }}">
+                        {% if form_errors and form_errors.username %}
+                            <p class="mt-1 text-xs text-red-600">{{ form_errors.username }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Display Name -->
+                    <div>
+                        <label for="display_name" class="block text-sm font-medium text-gray-700 mb-1">Display Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="display_name" name="display_name" required minlength="3" maxlength="100"
+                            class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 {% if form_errors and form_errors.display_name %}form-input-error{% endif %}"
+                            placeholder="e.g. Jane Doe"
+                            value="{{ form_data.display_name if form_data and form_data.display_name else '' }}">
+                        {% if form_errors and form_errors.display_name %}
+                            <p class="mt-1 text-xs text-red-600">{{ form_errors.display_name }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="password" name="password" required minlength="8" maxlength="128"
+                            class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 {% if form_errors and form_errors.password %}form-input-error{% endif %}"
+                            placeholder="Min 8 characters">
+                        {% if form_errors and form_errors.password %}
+                            <p class="mt-1 text-xs text-red-600">{{ form_errors.password }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Role -->
+                    <div>
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role <span class="text-red-500">*</span></label>
+                        <select id="role" name="role" required
+                            class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 {% if form_errors and form_errors.role %}form-input-error{% endif %}">
+                            <option value="staff" {% if form_data and form_data.role == 'staff' %}selected{% endif %}>Staff</option>
+                            <option value="admin" {% if form_data and form_data.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        {% if form_errors and form_errors.role %}
+                            <p class="mt-1 text-xs text-red-600">{{ form_errors.role }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors shadow-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">All Users</h2>
+        </div>
+
+        {% if users and users | length > 0 %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Joined</th>
+                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for u in users %}
+                            <tr class="table-row-hover">
+                                <!-- Avatar + Display Name -->
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <div class="flex items-center space-x-3">
+                                        {% if u.role == 'admin' %}
+                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-semibold select-none" title="Admin">🛡️</span>
+                                        {% else %}
+                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-teal-500 text-white text-sm font-semibold select-none" title="Staff">📦</span>
+                                        {% endif %}
+                                        <span class="text-sm font-medium text-gray-900">{{ u.display_name or u.username }}</span>
+                                    </div>
+                                </td>
+
+                                <!-- Username -->
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600 font-mono">{{ u.username }}</span>
+                                </td>
+
+                                <!-- Role Badge -->
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    {% if u.role == 'admin' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Admin</span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">Staff</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Date Joined -->
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-500">{{ u.created_at.strftime('%b %d, %Y') if u.created_at else '—' }}</span>
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="px-4 py-4 whitespace-nowrap text-right">
+                                    {% set is_self = (user and u.id == user.id) %}
+                                    {% set is_default_admin = (u.username == default_admin_username) %}
+                                    {% if is_self or is_default_admin %}
+                                        <button type="button" disabled
+                                            class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
+                                            title="{{ 'Cannot delete your own account' if is_self else 'Cannot delete the default admin account' }}">
+                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    {% else %}
+                                        <form method="post" action="/users/{{ u.id }}/delete/" class="inline"
+                                            onsubmit="return confirm('Are you sure you want to delete user \'{{ u.display_name or u.username }}\'? This action cannot be undone.');">
+                                            <button type="submit"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="px-4 py-12 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-semibold text-gray-900">No users found</h3>
+                <p class="mt-1 text-sm text-gray-500">Get started by adding a new user above.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StockPilot{% endblock %} | StockPilot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/custom.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full flex flex-col min-h-screen text-gray-800">
+
+    {% macro avatar(role) %}
+        {% if role == 'admin' %}
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-semibold select-none" title="Admin">🛡️</span>
+        {% else %}
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-teal-500 text-white text-sm font-semibold select-none" title="Staff">📦</span>
+        {% endif %}
+    {% endmacro %}
+
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <a href="/" class="flex items-center space-x-2 text-brand-700 font-bold text-xl tracking-tight focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 rounded-md px-1">
+                        <svg class="w-7 h-7 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                        <span>StockPilot</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex md:hidden">
+                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block w-6 h-6" id="menu-icon-open" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                        <svg class="hidden w-6 h-6" id="menu-icon-close" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Desktop nav -->
+                <div class="hidden md:flex md:items-center md:space-x-1">
+                    {% if user %}
+                        <a href="/inventory/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">Inventory</a>
+                        {% if user.role == 'admin' %}
+                            <a href="/dashboard/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">Dashboard</a>
+                            <a href="/categories/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">Categories</a>
+                            <a href="/users/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">Users</a>
+                        {% endif %}
+                        <div class="flex items-center ml-4 pl-4 border-l border-gray-200 space-x-3">
+                            <div class="flex items-center space-x-2">
+                                {{ avatar(user.role) }}
+                                <span class="text-sm font-medium text-gray-700">{{ user.display_name or user.username }}</span>
+                                {% if user.role == 'admin' %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Admin</span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">Staff</span>
+                                {% endif %}
+                            </div>
+                            <form method="post" action="/logout/" class="inline">
+                                <button type="submit" class="px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Logout</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <a href="/login/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">Login</a>
+                        <a href="/register/" class="ml-2 px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 shadow-sm">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="hidden md:hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 bg-white">
+                {% if user %}
+                    <div class="flex items-center space-x-2 px-3 py-2 mb-2">
+                        {{ avatar(user.role) }}
+                        <span class="text-sm font-medium text-gray-700">{{ user.display_name or user.username }}</span>
+                        {% if user.role == 'admin' %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Admin</span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">Staff</span>
+                        {% endif %}
+                    </div>
+                    <a href="/inventory/" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">Inventory</a>
+                    {% if user.role == 'admin' %}
+                        <a href="/dashboard/" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">Dashboard</a>
+                        <a href="/categories/" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">Categories</a>
+                        <a href="/users/" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">Users</a>
+                    {% endif %}
+                    <div class="border-t border-gray-200 mt-2 pt-2">
+                        <form method="post" action="/logout/">
+                            <button type="submit" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">Logout</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="/login/" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-700 hover:bg-brand-50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500">Login</a>
+                    <a href="/register/" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-brand-600 hover:bg-brand-700 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash messages -->
+    {% if flash %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-2">
+            {% for message in flash %}
+                <div class="flash-alert relative flex items-center justify-between px-4 py-3 rounded-lg border text-sm
+                    {% if message.startswith('Error') or message.startswith('error') %}
+                        bg-red-50 border-red-200 text-red-800
+                    {% elif message.startswith('Warning') or message.startswith('warning') %}
+                        bg-yellow-50 border-yellow-200 text-yellow-800
+                    {% else %}
+                        bg-brand-50 border-brand-200 text-brand-800
+                    {% endif %}
+                " role="alert">
+                    <span>{{ message }}</span>
+                    <button type="button" class="flash-dismiss ml-4 inline-flex items-center justify-center p-1 rounded-md hover:bg-black/5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500" aria-label="Dismiss">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main content -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+                <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    <span>&copy; {{ now().year if now is defined else "2024" }} StockPilot. All rights reserved.</span>
+                </div>
+                <div class="text-gray-400 text-xs">
+                    Inventory management made simple.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        (function() {
+            var btn = document.getElementById('mobile-menu-btn');
+            var menu = document.getElementById('mobile-menu');
+            var iconOpen = document.getElementById('menu-icon-open');
+            var iconClose = document.getElementById('menu-icon-close');
+            if (btn && menu) {
+                btn.addEventListener('click', function() {
+                    var expanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', String(!expanded));
+                    menu.classList.toggle('hidden');
+                    if (iconOpen && iconClose) {
+                        iconOpen.classList.toggle('hidden');
+                        iconOpen.classList.toggle('block');
+                        iconClose.classList.toggle('hidden');
+                        iconClose.classList.toggle('block');
+                    }
+                });
+            }
+        })();
+
+        // Flash message dismiss
+        (function() {
+            var buttons = document.querySelectorAll('.flash-dismiss');
+            buttons.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var alert = btn.closest('.flash-alert');
+                    if (alert) {
+                        alert.style.transition = 'opacity 0.2s ease-out';
+                        alert.style.opacity = '0';
+                        setTimeout(function() {
+                            alert.remove();
+                        }, 200);
+                    }
+                });
+            });
+
+            // Auto-dismiss after 5 seconds
+            var alerts = document.querySelectorAll('.flash-alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    if (alert && alert.parentNode) {
+                        alert.style.transition = 'opacity 0.3s ease-out';
+                        alert.style.opacity = '0';
+                        setTimeout(function() {
+                            if (alert.parentNode) {
+                                alert.remove();
+                            }
+                        }, 300);
+                    }
+                }, 5000);
+            });
+        })();
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
